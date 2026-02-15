@@ -133,6 +133,61 @@
           max-width: none;
         }
       }
+
+      .cookie-banner {
+        position: fixed;
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+        z-index: 50;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 14px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        background: rgba(0, 0, 0, 0.84);
+        color: #fff;
+        backdrop-filter: blur(6px);
+      }
+
+      .cookie-banner p {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.35;
+      }
+
+      .cookie-banner button {
+        border: 0;
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        color: #fff;
+        background: #1e7bff;
+        white-space: nowrap;
+      }
+
+      .cookie-banner button:hover {
+        background: #1663cf;
+      }
+
+      @media (max-width: 700px) {
+        .cookie-banner {
+          flex-direction: column;
+          align-items: stretch;
+          bottom: 8px;
+          left: 8px;
+          right: 8px;
+          padding: 10px 12px;
+        }
+
+        .cookie-banner button {
+          width: 100%;
+        }
+      }
     </style>
   </head>
   <body>
@@ -154,10 +209,20 @@
         </video>
       </div>
     </main>
+    <aside class="cookie-banner" id="cookie-banner" role="dialog" aria-live="polite">
+      <p>
+        Informacja o cookies i RODO: na tej stronie nic nie jest przetwarzane, nic nie
+        jest zapisywane i nie zbieramy zadnych danych o uzytkownikach. Kliknij
+        "Akceptuje", aby zamknac komunikat.
+      </p>
+      <button type="button" id="accept-cookies">Akceptuje</button>
+    </aside>
     <script>
       (() => {
         const slot = document.querySelector(".video-slot");
         const video = document.querySelector(".video-slot video");
+        const cookieBanner = document.getElementById("cookie-banner");
+        const acceptCookiesBtn = document.getElementById("accept-cookies");
         if (!slot || !video) return;
 
         const startVideo = () => {
@@ -198,6 +263,11 @@
         document.addEventListener("pointerdown", unlockSoundOnFirstInteraction, {
           once: true
         });
+        if (cookieBanner && acceptCookiesBtn) {
+          acceptCookiesBtn.addEventListener("click", () => {
+            cookieBanner.style.display = "none";
+          });
+        }
 
         if (document.readyState === "loading") {
           document.addEventListener("DOMContentLoaded", setup, { once: true });
