@@ -252,9 +252,10 @@
       (() => {
         const slot = document.querySelector(".video-slot");
         const video = document.querySelector(".video-slot video");
-        const cookieBanner = document.getElementById("cookie-banner");
+        const cookieOverlay = document.getElementById("cookie-overlay");
         const acceptCookiesBtn = document.getElementById("accept-cookies");
         if (!slot || !video) return;
+        let hasAcceptedCookies = false;
 
         const playWithSound = () => {
           video.defaultMuted = false;
@@ -263,26 +264,47 @@
           return video.play();
         };
 
+        const playMuted = () => {
+          video.defaultMuted = true;
+          video.muted = true;
+          video.volume = 0;
+          return video.play();
+        };
+
         const enforcePlaybackWithSound = () => {
-          video.defaultMuted = false;
-          if (video.muted) {
-            video.muted = false;
-          }
-          if (video.volume !== 1) {
-            video.volume = 1;
+          if (hasAcceptedCookies) {
+            video.defaultMuted = false;
+            if (video.muted) {
+              video.muted = false;
+            }
+            if (video.volume !== 1) {
+              video.volume = 1;
+            }
+          } else {
+            video.defaultMuted = true;
+            if (!video.muted) {
+              video.muted = true;
+            }
+            if (video.volume !== 0) {
+              video.volume = 0;
+            }
           }
           video.loop = true;
           if (!document.hidden && video.paused) {
-            playWithSound().catch(() => {});
+            if (hasAcceptedCookies) {
+              playWithSound().catch(() => {});
+            } else {
+              playMuted().catch(() => {});
+            }
           }
         };
 
         const startVideo = () => {
-          playWithSound().catch(() => {});
-        };
-
-        const unlockSoundOnFirstInteraction = () => {
-          playWithSound().catch(() => {});
+          if (hasAcceptedCookies) {
+            playWithSound().catch(() => {});
+            return;
+          }
+          playMuted().catch(() => {});
         };
 
         const syncVideoAspectRatio = () => {
@@ -338,13 +360,12 @@
           enforcePlaybackWithSound();
         });
         window.addEventListener("pageshow", enforcePlaybackWithSound);
-        document.addEventListener("pointerdown", unlockSoundOnFirstInteraction, {
-          once: true
-        });
         window.setInterval(enforcePlaybackWithSound, 1200);
-        if (cookieBanner && acceptCookiesBtn) {
+        if (cookieOverlay && acceptCookiesBtn) {
           acceptCookiesBtn.addEventListener("click", () => {
-            cookieBanner.style.display = "none";
+            hasAcceptedCookies = true;
+            cookieOverlay.classList.add("is-hidden");
+            playWithSound().catch(() => {});
           });
         }
 
