@@ -246,17 +246,8 @@
           return video.play();
         };
 
-        const playMuted = () => {
-          video.defaultMuted = true;
-          video.muted = true;
-          video.volume = 0;
-          return video.play();
-        };
-
         const startVideo = () => {
-          playWithSound().catch(() => {
-            playMuted().catch(() => {});
-          });
+          playWithSound().catch(() => {});
         };
 
         const unlockSoundOnFirstInteraction = () => {
