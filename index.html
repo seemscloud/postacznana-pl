@@ -326,23 +326,7 @@
           startVideo();
         };
 
-        let lastPlaybackTime = 0;
-        let allowProgrammaticSeek = false;
-
         video.addEventListener("loadedmetadata", syncVideoAspectRatio);
-        video.addEventListener("timeupdate", () => {
-          if (!video.seeking) {
-            lastPlaybackTime = video.currentTime;
-          }
-        });
-        video.addEventListener("seeking", () => {
-          if (allowProgrammaticSeek || video.ended) return;
-          if (Math.abs(video.currentTime - lastPlaybackTime) > 0.15) {
-            allowProgrammaticSeek = true;
-            video.currentTime = lastPlaybackTime;
-            allowProgrammaticSeek = false;
-          }
-        });
         video.addEventListener("pause", () => {
           if (!video.ended && !document.hidden) {
             startVideo();
@@ -355,9 +339,6 @@
           event.preventDefault();
         });
         video.addEventListener("ended", () => {
-          allowProgrammaticSeek = true;
-          video.currentTime = 0;
-          allowProgrammaticSeek = false;
           startVideo();
         });
         document.addEventListener("visibilitychange", () => {
