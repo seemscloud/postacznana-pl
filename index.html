@@ -246,6 +246,20 @@
           return video.play();
         };
 
+        const enforcePlaybackWithSound = () => {
+          video.defaultMuted = false;
+          if (video.muted) {
+            video.muted = false;
+          }
+          if (video.volume !== 1) {
+            video.volume = 1;
+          }
+          video.loop = true;
+          if (!document.hidden && video.paused) {
+            playWithSound().catch(() => {});
+          }
+        };
+
         const startVideo = () => {
           playWithSound().catch(() => {});
         };
@@ -262,6 +276,7 @@
 
         const setup = () => {
           syncVideoAspectRatio();
+          enforcePlaybackWithSound();
           startVideo();
         };
 
@@ -287,6 +302,9 @@
             startVideo();
           }
         });
+        video.addEventListener("volumechange", () => {
+          enforcePlaybackWithSound();
+        });
         video.addEventListener("contextmenu", (event) => {
           event.preventDefault();
         });
@@ -300,10 +318,13 @@
           if (!document.hidden && video.paused) {
             startVideo();
           }
+          enforcePlaybackWithSound();
         });
+        window.addEventListener("pageshow", enforcePlaybackWithSound);
         document.addEventListener("pointerdown", unlockSoundOnFirstInteraction, {
           once: true
         });
+        window.setInterval(enforcePlaybackWithSound, 1200);
         if (cookieBanner && acceptCookiesBtn) {
           acceptCookiesBtn.addEventListener("click", () => {
             cookieBanner.style.display = "none";
