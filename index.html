@@ -137,61 +137,76 @@
         }
       }
 
-      .cookie-banner {
+      .cookie-overlay {
         position: fixed;
-        left: 50%;
-        bottom: 14px;
-        transform: translateX(-50%);
-        width: min(92vw, 920px);
-        z-index: 50;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 14px;
-        padding: 13px 16px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 14px;
-        background: rgba(0, 0, 0, 0.86);
+        inset: 0;
+        z-index: 80;
+        display: grid;
+        place-items: center;
+        padding: 16px;
+        background: rgba(0, 0, 0, 0.45);
+      }
+
+      .cookie-overlay.is-hidden {
+        display: none;
+      }
+
+      .cookie-banner {
+        width: min(96vw, 760px);
+        padding: 24px;
+        border: 2px solid rgba(255, 255, 255, 0.9);
+        background: #0c4d97;
         color: #fff;
-        backdrop-filter: blur(6px);
-        box-shadow: 0 10px 26px rgba(0, 0, 0, 0.45);
+        box-shadow: 0 16px 38px rgba(0, 0, 0, 0.5);
+      }
+
+      .cookie-banner h2 {
+        margin: 0 0 18px;
+        font-size: 46px;
+        font-weight: 500;
       }
 
       .cookie-banner p {
-        margin: 0;
-        flex: 1;
-        font-size: 13px;
+        margin: 0 0 24px;
+        font-size: 42px;
         line-height: 1.35;
       }
 
       .cookie-banner button {
-        border: 0;
-        border-radius: 8px;
-        padding: 10px 16px;
-        font-size: 14px;
+        border: 2px solid #fff;
+        padding: 14px 30px;
+        font-size: 18px;
         font-weight: 700;
         cursor: pointer;
         color: #fff;
-        background: #1e7bff;
+        background: #000;
         white-space: nowrap;
-        min-width: 120px;
+        min-width: 200px;
       }
 
       .cookie-banner button:hover {
-        background: #1663cf;
+        background: #1a1a1a;
       }
 
       @media (max-width: 700px) {
         .cookie-banner {
-          flex-direction: column;
-          align-items: stretch;
-          width: min(94vw, 460px);
-          bottom: 10px;
-          padding: 10px 12px;
+          width: 96vw;
+          padding: 18px;
+        }
+
+        .cookie-banner h2 {
+          margin-bottom: 12px;
+          font-size: 34px;
+        }
+
+        .cookie-banner p {
+          margin-bottom: 16px;
+          font-size: 22px;
         }
 
         .cookie-banner button {
           width: 100%;
+          min-width: 0;
         }
       }
     </style>
@@ -223,14 +238,16 @@
         </video>
       </div>
     </main>
-    <aside class="cookie-banner" id="cookie-banner" role="dialog" aria-live="polite">
-      <p>
-        Informacja o cookies i RODO: na tej stronie nic nie jest przetwarzane, nic nie
-        jest zapisywane i nie zbieramy zadnych danych o uzytkownikach. Kliknij
-        "Akceptuje", aby zamknac komunikat.
-      </p>
-      <button type="button" id="accept-cookies">Akceptuje</button>
-    </aside>
+    <div class="cookie-overlay" id="cookie-overlay">
+      <aside class="cookie-banner" role="dialog" aria-modal="true" aria-live="polite">
+        <h2>Cookies</h2>
+        <p>
+          Na tej stronie nic nie jest przetwarzane i nic nie jest zapisywane. Kliknij
+          "Akceptuje", aby wlaczyc dzwiek.
+        </p>
+        <button type="button" id="accept-cookies">Akceptuje</button>
+      </aside>
+    </div>
     <script>
       (() => {
         const slot = document.querySelector(".video-slot");
