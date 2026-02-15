@@ -234,6 +234,7 @@
           loop
           muted
           playsinline
+          webkit-playsinline
           preload="auto"
           disablepictureinpicture
           disableremoteplayback
@@ -327,6 +328,11 @@
         };
 
         video.addEventListener("loadedmetadata", syncVideoAspectRatio);
+        video.addEventListener("canplay", () => {
+          if (video.paused) {
+            startVideo();
+          }
+        });
         video.addEventListener("pause", () => {
           if (!video.ended && !document.hidden) {
             startVideo();
