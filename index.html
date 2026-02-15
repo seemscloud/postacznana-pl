@@ -228,18 +228,28 @@
         const acceptCookiesBtn = document.getElementById("accept-cookies");
         if (!slot || !video) return;
 
-        const startVideo = () => {
+        const playWithSound = () => {
           video.defaultMuted = false;
           video.muted = false;
           video.volume = 1;
-          video.play().catch(() => {});
+          return video.play();
+        };
+
+        const playMuted = () => {
+          video.defaultMuted = true;
+          video.muted = true;
+          video.volume = 0;
+          return video.play();
+        };
+
+        const startVideo = () => {
+          playWithSound().catch(() => {
+            playMuted().catch(() => {});
+          });
         };
 
         const unlockSoundOnFirstInteraction = () => {
-          video.defaultMuted = false;
-          video.muted = false;
-          video.volume = 1;
-          startVideo();
+          playWithSound().catch(() => {});
         };
 
         const syncVideoAspectRatio = () => {
