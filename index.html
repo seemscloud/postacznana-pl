@@ -117,6 +117,7 @@
         height: 100%;
         display: block;
         object-fit: cover;
+        touch-action: manipulation;
       }
     </style>
   </head>
@@ -133,11 +134,59 @@
         draggable="false"
       />
       <div class="video-slot">
-        <video autoplay loop playsinline preload="auto" controls>
+        <video autoplay loop muted playsinline preload="auto" controls>
           <source src="postacznana.mp4" type="video/mp4" />
           Twoja przegladarka nie obsluguje odtwarzania video.
         </video>
       </div>
     </main>
+    <script>
+      (() => {
+        const scene = document.querySelector(".scene");
+        const slot = document.querySelector(".video-slot");
+        const video = document.querySelector(".video-slot video");
+        if (!scene || !slot || !video) return;
+
+        const sourceSize = { width: 1536, height: 1024 };
+        const slotRatio = { left: 0.26, top: 0.19, width: 0.465, height: 0.64 };
+
+        const positionVideoSlot = () => {
+          const rect = scene.getBoundingClientRect();
+          const scale = Math.max(rect.width / sourceSize.width, rect.height / sourceSize.height);
+          const renderedWidth = sourceSize.width * scale;
+          const renderedHeight = sourceSize.height * scale;
+          const offsetX = (rect.width - renderedWidth) / 2;
+          const offsetY = (rect.height - renderedHeight) / 2;
+
+          slot.style.left = `${sourceSize.width * slotRatio.left * scale + offsetX}px`;
+          slot.style.top = `${sourceSize.height * slotRatio.top * scale + offsetY}px`;
+          slot.style.width = `${sourceSize.width * slotRatio.width * scale}px`;
+          slot.style.height = `${sourceSize.height * slotRatio.height * scale}px`;
+        };
+
+        const startVideo = () => {
+          video.play().catch(() => {});
+        };
+
+        const setup = () => {
+          positionVideoSlot();
+          startVideo();
+        };
+
+        window.addEventListener("resize", positionVideoSlot);
+        window.addEventListener("orientationchange", () => setTimeout(positionVideoSlot, 120));
+        video.addEventListener("ended", () => {
+          video.currentTime = 0;
+          startVideo();
+        });
+
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", setup, { once: true });
+          return;
+        }
+
+        setup();
+      })();
+    </script>
   </body>
 </html>
