@@ -104,12 +104,14 @@
 
       .video-slot {
         position: absolute;
-        left: 26%;
-        top: 19%;
-        width: 46.5%;
-        height: 64%;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 80vw;
+        max-width: 1280px;
+        aspect-ratio: 16 / 9;
         overflow: hidden;
-        background: #fff;
+        background: #000;
       }
 
       .video-slot video {
@@ -142,42 +144,34 @@
     </main>
     <script>
       (() => {
-        const scene = document.querySelector(".scene");
         const slot = document.querySelector(".video-slot");
         const video = document.querySelector(".video-slot video");
-        if (!scene || !slot || !video) return;
-
-        const sourceSize = { width: 1536, height: 1024 };
-        const slotRatio = { left: 0.26, top: 0.19, width: 0.465, height: 0.64 };
-
-        const positionVideoSlot = () => {
-          const rect = scene.getBoundingClientRect();
-          const scale = Math.max(rect.width / sourceSize.width, rect.height / sourceSize.height);
-          const renderedWidth = sourceSize.width * scale;
-          const renderedHeight = sourceSize.height * scale;
-          const offsetX = (rect.width - renderedWidth) / 2;
-          const offsetY = (rect.height - renderedHeight) / 2;
-
-          slot.style.left = `${sourceSize.width * slotRatio.left * scale + offsetX}px`;
-          slot.style.top = `${sourceSize.height * slotRatio.top * scale + offsetY}px`;
-          slot.style.width = `${sourceSize.width * slotRatio.width * scale}px`;
-          slot.style.height = `${sourceSize.height * slotRatio.height * scale}px`;
-        };
+        if (!slot || !video) return;
 
         const startVideo = () => {
           video.play().catch(() => {});
         };
 
+        const syncVideoAspectRatio = () => {
+          if (video.videoWidth > 0 && video.videoHeight > 0) {
+            slot.style.aspectRatio = `${video.videoWidth} / ${video.videoHeight}`;
+          }
+        };
+
         const setup = () => {
-          positionVideoSlot();
+          syncVideoAspectRatio();
           startVideo();
         };
 
-        window.addEventListener("resize", positionVideoSlot);
-        window.addEventListener("orientationchange", () => setTimeout(positionVideoSlot, 120));
+        video.addEventListener("loadedmetadata", syncVideoAspectRatio);
         video.addEventListener("ended", () => {
           video.currentTime = 0;
           startVideo();
+        });
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden && video.paused) {
+            startVideo();
+          }
         });
 
         if (document.readyState === "loading") {
