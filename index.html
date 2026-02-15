@@ -97,6 +97,9 @@
         height: 100%;
         display: block;
         object-fit: cover;
+        pointer-events: none;
+        user-select: none;
+        -webkit-user-drag: none;
       }
 
       .video-slot {
@@ -123,7 +126,12 @@
       <p class="sr-only">
         Satyryczne wideo projektu Postać Znana. Material nawiazuje do Donalda Tuska i Jacka Muranskiego.
       </p>
-      <img class="scene-bg" src="background.png" alt="Grafika tla Postacznana" />
+      <img
+        class="scene-bg"
+        src="background.png"
+        alt="Grafika tla Postacznana"
+        draggable="false"
+      />
       <div class="video-slot">
         <video autoplay loop playsinline preload="auto" controls>
           <source src="postacznana.mp4" type="video/mp4" />
